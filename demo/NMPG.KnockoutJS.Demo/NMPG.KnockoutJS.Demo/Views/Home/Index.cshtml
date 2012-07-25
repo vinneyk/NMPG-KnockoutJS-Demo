@@ -1,0 +1,78 @@
+﻿
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>NMPG Knockout Demo</title>
+    <script type="text/javascript" src="~/Scripts/knockout-2.0.0.js"></script>
+</head>
+    <body>
+        
+        <style type="text/css">
+            .msft {
+                font-weight: 800;
+            }
+
+            .appl {
+                display: none;
+            }
+
+        </style>
+
+        <hgroup>
+            <h1>Knockout Demo</h1>
+            <h2>New Mexico Programming Group - July 2012</h2>
+        </hgroup>
+        
+        <input type="text" data-bind="value: firstName, valueUpdate: 'afterkeydown'"/>
+        <input type="text" data-bind="value: lastName, valueUpdate: 'afterkeydown'"/>
+        <select data-bind="options: affinities, optionsCaption: ' ', value: affinity"></select>
+        <input type="button" data-bind="click: add, enable: firstName().length > 0 && lastName().length > 0" value="Add" />
+        
+        <ul data-bind="foreach: people">
+            <li data-bind="css: { msft: affinity == 'PC', appl: affinity == 'Mac' }">
+                <span data-bind="text: name"></span>
+                <a href="#" data-bind="click: $root.remove">remove</a>
+            </li>
+        </ul>
+        
+    </body>
+    
+
+    <script type="text/javascript">
+        function Person(firstName, lastName, affinity) {
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.affinity = affinity;
+                
+            this.name = ko.computed(function() {
+                return firstName + " " + lastName;
+            });
+        }
+
+        var MyViewModel = function() {
+            var self = this;
+
+            self.firstName = ko.observable("Vinney");
+            self.lastName = ko.observable("Kelly");
+            self.affinity = ko.observable();
+            
+            self.people = ko.observableArray([]);
+            self.affinities = ['Mac', 'PC'];
+            
+            self.add = function() {
+                self.people.push(new Person(self.firstName(), self.lastName(), self.affinity()));
+                self.firstName("");
+                self.lastName("");
+            };
+
+            self.remove = function(person) {
+                self.people.remove(person);
+            };
+        };
+
+        var vm = new MyViewModel();
+        ko.applyBindings(vm);
+    </script>
+</html>
